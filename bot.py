@@ -10,8 +10,8 @@ TOKEN = os.environ["TOKEN"]
 
 updater = Updater(TOKEN, use_context=True)
 dispatcher = updater.dispatcher
-updater.start_webhook(listen="0.0.0.0", port=int(PORT), url_path=TOKEN)
-updater.bot.setWebhook('https://your-app-name.herokuapp.com/' + TOKEN) 
+updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
+updater.bot.setWebhook('https://curvefibot.herokuapp.com/' + TOKEN) 
 updater.idle()
 
 def start(update, context):
