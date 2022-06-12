@@ -21,7 +21,7 @@ def main():
 
 def start(update, context):
     chat_id = update.effective_chat.id
-    context.bot.send_message(chat_id=chat_id, text="Hello! Welcome to the CurveFi Bot")
+    context.bot.send_message(chat_id=chat_id, text="Hello! Welcome to the CurveFi Bot\n\n Example: Type '/ethsteth' to see details about the ETH/stETH pool")
 
 def ethsteth(update, context):
     chat_id = update.effective_chat.id
