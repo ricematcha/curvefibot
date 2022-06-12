@@ -8,11 +8,16 @@ import os
 PORT = int(os.environ.get('PORT', 5000))
 TOKEN = os.environ["TOKEN"]
 
-updater = Updater(TOKEN, use_context=True)
-dispatcher = updater.dispatcher
-updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
-updater.bot.setWebhook('https://curvefibot.herokuapp.com/' + TOKEN) 
-updater.idle()
+def main():
+    updater = Updater(TOKEN, use_context=True)
+    dispatcher = updater.dispatcher
+    dispatcher.add_handler(CommandHandler("start", start))
+    # dispatcher.add_handler(CommandHandler("boo", boo))
+    dispatcher.add_handler(CommandHandler("ethsteth", ethsteth))
+    # updater.start_polling()
+    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN, webhook_url='https://curvefibot.herokuapp.com/' + TOKEN)
+    updater.bot.setWebhook('https://curvefibot.herokuapp.com/' + TOKEN) 
+    updater.idle()
 
 def start(update, context):
     chat_id = update.effective_chat.id
@@ -54,7 +59,5 @@ def boo(update, context):
 
     context.bot.send_message(chat_id=chat_id, text=message)
 
-dispatcher.add_handler(CommandHandler("start", start))
-# dispatcher.add_handler(CommandHandler("boo", boo))
-dispatcher.add_handler(CommandHandler("ethsteth", ethsteth))
-# updater.start_polling()
+if __name__ == '__main__':
+    main()
