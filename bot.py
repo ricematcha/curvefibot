@@ -1,3 +1,4 @@
+import logging
 import telegram
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 from telegram.ext import MessageHandler, Filters
@@ -6,13 +7,19 @@ from curvefi_tracker import get_pools
 import re
 import os
 
+# Enable logging
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
 PORT = int(os.environ.get('PORT', 5000))
 
 # //Toggle off for local testing
-TOKEN = os.environ["TOKEN"]
+# TOKEN = os.environ["TOKEN"]
 
 # //Toggle on for local testing, CLEAR token variable
-# TOKEN = ""
+TOKEN = ""
 
 updater = Updater(TOKEN, use_context=True)
 dispatcher = updater.dispatcher
@@ -25,12 +32,12 @@ def main():
     dispatcher.add_handler(MessageHandler(Filters.text, unknown))
 
     # //Toggle on for local testing
-    # updater.start_polling()
+    updater.start_polling()
 
     # //Toggle off for local testing
-    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN, webhook_url='https://curvefibot.herokuapp.com/' + TOKEN)
-    updater.bot.setWebhook('https://curvefibot.herokuapp.com/' + TOKEN) 
-    updater.idle()
+    # updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN, webhook_url='https://curvefibot.herokuapp.com/' + TOKEN)
+    # updater.bot.setWebhook('https://curvefibot.herokuapp.com/' + TOKEN) 
+    # updater.idle()
 
 def start(update, context):
     chat_id = update.effective_chat.id
