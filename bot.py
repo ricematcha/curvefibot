@@ -1,20 +1,33 @@
 import telegram
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
+from telegram.ext import MessageHandler, Filters
 from tracker import get_prices
 from curvefi_tracker import get_pools
 import re
 import os
 
 PORT = int(os.environ.get('PORT', 5000))
+
+# //Toggle off for local testing
 TOKEN = os.environ["TOKEN"]
 
+# //Toggle on for local testing, CLEAR token variable
+# TOKEN = ""
+
+updater = Updater(TOKEN, use_context=True)
+dispatcher = updater.dispatcher
 def main():
-    updater = Updater(TOKEN, use_context=True)
-    dispatcher = updater.dispatcher
+    # updater = Updater(TOKEN, use_context=True)
+    # dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("start", start))
     # dispatcher.add_handler(CommandHandler("boo", boo))
     dispatcher.add_handler(CommandHandler("ethsteth", ethsteth))
+    dispatcher.add_handler(MessageHandler(Filters.text, unknown))
+
+    # //Toggle on for local testing
     # updater.start_polling()
+
+    # //Toggle off for local testing
     updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN, webhook_url='https://curvefibot.herokuapp.com/' + TOKEN)
     updater.bot.setWebhook('https://curvefibot.herokuapp.com/' + TOKEN) 
     updater.idle()
@@ -22,6 +35,10 @@ def main():
 def start(update, context):
     chat_id = update.effective_chat.id
     context.bot.send_message(chat_id=chat_id, text="Hello! Welcome to the CurveFi Bot\n\n Example: Type '/ethsteth' to see details about the ETH/stETH pool")
+
+def unknown(update, context):
+    if update.message.text[0] == "/":
+        context.bot.send_message(chat_id=update.message.chat_id, text="Sorry, I didn't understand that command.")
 
 def ethsteth(update, context):
     chat_id = update.effective_chat.id
