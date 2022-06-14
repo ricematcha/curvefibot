@@ -1,24 +1,18 @@
 import logging
 from multiprocessing import pool
-import telegram
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler
-from telegram.ext import MessageHandler, Filters
 from tracker import get_prices
 from curvefi_tracker import get_pools
-import re
 import os
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import (
+    Updater,
     CommandHandler,
-    ContextTypes,
     ConversationHandler,
     CallbackContext,
     MessageHandler,
-    filters,
+    Filters,
 )
-
-GENDER, PHOTO, LOCATION, BIO = range(4)
 
 # Enable logging
 logging.basicConfig(
@@ -39,10 +33,6 @@ POOLS = range(1)
 def main():
     updater = Updater(TOKEN, use_context=True)
     dispatcher = updater.dispatcher
-    # dispatcher.add_handler(CommandHandler("start", start))
-    # dispatcher.add_handler(CommandHandler("boo", boo))
-    dispatcher.add_handler(CommandHandler("ethsteth", ethsteth))
-    # dispatcher.add_handler(MessageHandler(Filters.text, unknown))
 
     # //Toggle off for local testing
     # updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN, webhook_url='https://curvefibot.herokuapp.com/' + TOKEN)
@@ -53,7 +43,7 @@ def main():
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
         states={
-            POOLS: [MessageHandler(Filters.text & ~Filters.command, ethsteth)],
+            POOLS: [MessageHandler(Filters.text & ~Filters.command, pools)],
         },
         fallbacks=[CommandHandler('cancel', cancel), CommandHandler('start', start)],
     )
@@ -63,16 +53,16 @@ def main():
 
     # //Toggle on for local testing
     updater.start_polling()
-
     updater.idle()
 
 
 
 def start(update: Update, context: CallbackContext) -> int:
     """Starts the conversation and ask user to input commands."""
-
+    user = update.message.from_user
+    logger.info("User %s has started the conversation.", user.first_name)
     update.message.reply_text(
-        "Hello! Welcome to the CurveFi Bot\n\n Example: Type '/ethsteth' to see details about the ETH/stETH pool"
+        "Hello! Welcome to the CurveFi Bot\n\nExample: Type '/ethsteth' to see details about the ETH/stETH pool"
     )
 
     return POOLS
@@ -82,20 +72,16 @@ def cancel(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     update.message.reply_text(
-        'Bye! I hope we can talk again some day.', reply_markup=ReplyKeyboardRemove()
+        'Bye! Thank you for using CurveFi Bot, do let us know if you have any feedback', reply_markup=ReplyKeyboardRemove()
     )
 
     return ConversationHandler.END
-
-# def start(update, context):
-#     chat_id = update.effective_chat.id
-#     context.bot.send_message(chat_id=chat_id, text="Hello! Welcome to the CurveFi Bot\n\n Example: Type '/ethsteth' to see details about the ETH/stETH pool")
 
 def unknown(update, context):
     if update.message.text[0] == "/":
         context.bot.send_message(chat_id=update.message.chat_id, text="Sorry, I didn't understand that command.")
 
-def ethsteth(update, context):
+def pools(update, context):
     chat_id = update.effective_chat.id
     message = ""
     context.bot.send_message(chat_id=chat_id, text="Polling data...")
