@@ -26,7 +26,7 @@ PORT = int(os.environ.get('PORT', 5000))
 # //Toggle off for local testing
 TOKEN = os.environ["TOKEN"]
 
-# //Toggle on for local testing, CLEAR token variable
+# //Toggle on for local testing, INSERT token variable and CLEAR when done
 # TOKEN = ""
 
 POOLS = range(1)
