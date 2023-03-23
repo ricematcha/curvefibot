@@ -52,8 +52,8 @@ def main():
     # updater.idle()
 
     # //Toggle off for local testing
-    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN, webhook_url='https://curvefibot.herokuapp.com/' + TOKEN)
-    updater.bot.setWebhook('https://curvefibot.herokuapp.com/' + TOKEN) 
+    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN, webhook_url='https://web-production-30ea.up.railway.app/' + TOKEN)
+    updater.bot.setWebhook('https://web-production-30ea.up.railway.app/' + TOKEN) 
     updater.idle()
 
 
